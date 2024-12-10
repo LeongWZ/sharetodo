@@ -30,3 +30,6 @@ __pycache__/
 env/
 
 *.sqlite3
+
+# environment variables
+.env
