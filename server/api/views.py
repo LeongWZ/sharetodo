@@ -77,7 +77,7 @@ class ProjectDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ProjectDetailMembershipList(APIView):
+class ProjectMembershipList(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated, HasProjectMembership, IsProjectAdminOrReadOnly]
     
@@ -148,7 +148,7 @@ class MembershipDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ProjectDetailTodoList(APIView):
+class ProjectTodoList(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated, HasProjectMembership]
     
@@ -227,7 +227,7 @@ class TodoDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ProjectDetailLogList(APIView):
+class ProjectLogList(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated, HasProjectMembership]
     
