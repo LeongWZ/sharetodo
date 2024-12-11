@@ -20,12 +20,25 @@ class ProjectList(APIView):
     
     @extend_schema(responses={200: ProjectSerializer(many=True)})
     def get(self, request: HttpRequest):
+        """
+        Handles GET requests to retrieve projects associated with the authenticated user.
+
+        This method filters projects based on the memberships of the user making the request,
+        serializes the project data, and returns it in the response.
+        """
         user: User = request.user
         projects = Project.objects.filter(memberships__user=user)
         serializer = ProjectSerializer(projects, many=True)
         return Response(serializer.data)
     
     def post(self, request: HttpRequest):
+        """
+        Handle POST request to create a new project.
+
+        This method validates the incoming data using the ProjectSerializer. If the data is valid,
+        it saves the new project and creates a Membership for the authenticated user with the role of ADMIN.
+        If the data is not valid, it returns a 400 Bad Request response with the validation errors.
+        """
         serializer = ProjectSerializer(data=request.data)
 
         if not serializer.is_valid():
