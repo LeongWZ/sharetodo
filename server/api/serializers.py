@@ -10,13 +10,14 @@ class MembershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Membership
         fields = ["id", "user", "project", "role"]
-        create_only_fields = ["user", "project"]
+        create_only_fields = ["user"]
 
     def to_internal_value(self, data):
         data = super().to_internal_value(data)
         if self.instance:
             # update
-            for x in self.create_only_fields:
+            print(data)
+            for x in self.Meta.create_only_fields:
                 data.pop(x)
         return data
 

@@ -13,6 +13,11 @@ class Project(models.Model):
 
 class Membership(models.Model):
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "project"], name="unique_membership")
+        ]
+
     class Role(models.TextChoices):
         ADMIN = "Admin"
         MEMBER = "Member"

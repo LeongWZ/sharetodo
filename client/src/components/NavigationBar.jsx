@@ -2,13 +2,17 @@ import { Link } from '@tanstack/react-router';
 import { AppBar, Toolbar, Button, Box } from '@mui/material';
 import useToken from '../hooks/useToken';
 import { isAuthenticated } from '../util/auth';
+import { useQueryClient } from '@tanstack/react-query';
 
 const NavigationBar = () => {
   // eslint-disable-next-line no-unused-vars
   const [token, setToken, removeToken] = useToken();
 
+  const queryClient = useQueryClient();
+
   const handleLogOut = () => {
     removeToken();
+    queryClient.clear();
   };
 
   return (

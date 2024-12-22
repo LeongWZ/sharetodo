@@ -1,4 +1,5 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { isAuthenticated } from '../../util/auth';
 
 const serverEndpoint = import.meta.env.VITE_SERVER_ENDPOINT;
 
@@ -49,3 +50,28 @@ export const useRegistration = () => {
         },
     });
 }
+
+export const useUser = (token) => {
+    const userUrl = `${serverEndpoint}/auth/user/`;
+
+    return useQuery({
+        queryKey: ['user'],
+        queryFn: async () => {
+            if (!isAuthenticated(token)) {
+                return null;
+            }
+            
+            const response = await fetch(userUrl, {
+                headers: {
+                    'Authorization': `Token ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch user');
+            }
+
+            return response.json();
+        },
+    });
+};

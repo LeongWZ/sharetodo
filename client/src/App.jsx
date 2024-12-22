@@ -3,12 +3,11 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { CookiesProvider } from 'react-cookie';
 
 // Import the query client
-import { queryClient } from "../services/queryClient";
+import { queryClient } from "@/services/queryClient";
 
 import { router } from "./router";
 
-import useToken from "../hooks/useToken";
-import { isAuthenticated } from "../util/auth";
+import useToken from "@/hooks/useToken";
 
 export default function App() {
   return (
@@ -25,7 +24,7 @@ function InnerApp() {
     <QueryClientProvider client={queryClient}>
       <RouterProvider
         router={router}
-        context={{ isAuthenticated: isAuthenticated(token) }}
+        context={{ isAuthenticated: token }}
       />
     </QueryClientProvider>
   );

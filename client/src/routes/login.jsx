@@ -5,8 +5,8 @@ import {
 } from '@tanstack/react-router'
 import { useState } from 'react'
 import { TextField, Button, Container, Typography, Box } from '@mui/material'
-import { useLogin } from '../../services/auth/endpoint'
-import useToken from '../../hooks/useToken'
+import { useLogin } from '@/services/auth/endpoint'
+import useToken from '@/hooks/useToken'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: ({ context }) => {

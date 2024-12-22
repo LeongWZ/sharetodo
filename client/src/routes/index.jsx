@@ -2,10 +2,11 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { Box, Button, Container, Grid2, Typography, Modal, TextField } from '@mui/material'
-import { useCreateProject, useProjects } from '../../services/projects/endpoint'
-import useToken from '../../hooks/useToken';
-import { isAuthenticated } from '../../util/auth'
-import WelcomePage from '../../components/WelcomePage'
+import { useCreateProject, useProjects } from '@/services/projects/endpoint'
+import useToken from '@/hooks/useToken';
+import { isAuthenticated } from '@/util/auth'
+import WelcomePage from '@/components/WelcomePage'
+import { useUser } from '@/services/auth/endpoint'
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -17,6 +18,7 @@ function Index() {
   const queryClient = useQueryClient()
 
   const { isLoading, data } = useProjects(token)
+  const { data: user } = useUser(token);
   const createProject = useCreateProject(token, queryClient)
 
   const [open, setOpen] = useState(false)
@@ -42,7 +44,7 @@ function Index() {
   return (
     <Container sx={{ padding: 2 }}>
       <Typography variant="h3" gutterBottom>
-        Welcome Home!
+        Welcome, {user?.username}!
       </Typography>
       <Button variant="contained" color="primary" onClick={handleOpen}>
         Create Project

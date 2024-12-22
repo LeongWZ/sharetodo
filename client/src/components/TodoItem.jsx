@@ -4,7 +4,20 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckableItem from './CheckableItem';
 
-const TodoItem = ({ todo, handleEditTodo, handleDeleteTodo, handleCheckCheckableItem, handleCheckTodo }) => {
+const TodoItem = ({ todo, handleEditTodo, handleDeleteTodo, editTodoMutationFn }) => {
+  
+  const handleCheckCheckableItem = (updatedItem) => editTodoMutationFn({
+    ...todo,
+    checkable_items: todo.checkable_items.map((item) =>
+      item.id === updatedItem.id ? updatedItem : item,
+    ),
+  });
+
+  const handleCheckTodo = (isChecked) => editTodoMutationFn({
+    ...todo,
+    is_done: isChecked
+  });
+  
   return (
     <Box
       sx={{
@@ -19,7 +32,7 @@ const TodoItem = ({ todo, handleEditTodo, handleDeleteTodo, handleCheckCheckable
           <Tooltip title={todo.is_done ? "Done" : "Not done"}>
             <Checkbox
               checked={todo.is_done}
-              onChange={(e) => handleCheckTodo(todo, e.target.checked)}
+              onChange={(e) => handleCheckTodo(e.target.checked)}
               color="success"
               />
           </Tooltip>
@@ -45,7 +58,7 @@ const TodoItem = ({ todo, handleEditTodo, handleDeleteTodo, handleCheckCheckable
         </Typography>
         <Box>
           {todo.checkable_items.map((item) => (
-            <CheckableItem key={item.id} item={item} onCheck={(updatedItem) => handleCheckCheckableItem(todo, updatedItem)} />
+            <CheckableItem key={item.id} item={item} onCheck={handleCheckCheckableItem} />
           ))}
         </Box>
       <Box sx={{ display: "flex", justifyContent: "end" }}>

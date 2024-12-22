@@ -95,6 +95,38 @@ export function useEditProject(projectId, token, queryClient) {
         mutationFn: putProject,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["projects", projectId] });
+            queryClient.invalidateQueries({ queryKey: ["projects"] });
+        }
+    });
+}
+
+export function useDeleteProject(projectId, token, queryClient) {
+
+    /**
+     * @param {{ title: String }} project 
+     * @returns 
+     */
+    const deleteProject = async () => {
+        const response = await fetch(`${serverEndpoint}/projects/${projectId}/`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Token ${token}`
+            }
+        });
+
+        if (response.status !== 204) {
+            throw new Error("Failed to delete project");
+        }
+
+        return;
+    }
+
+    return useMutation({
+        mutationFn: deleteProject,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["projects", projectId] });
+            queryClient.invalidateQueries({ queryKey: ["projects"] })
         }
     }); 
 }
@@ -137,7 +169,37 @@ export function useCreateProjectTodos(projectId, token, queryClient) {
     return useMutation({
         mutationFn: postProjectTodo,
         onSuccess: () => {
-            queryClient.invalidateQueries(["projects", projectId, "todos"]);
+            queryClient.invalidateQueries({ queryKey:["projects", projectId, "todos"]});
+        },
+    });
+}
+
+export function useCreateProjectMembership(projectId, token, queryClient) {
+    const postProjectMembership = async ({username, role}) => {
+        const response = await fetch(`${serverEndpoint}/projects/${projectId}/memberships/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Token ${token}`
+            },
+            body: JSON.stringify({
+                user: username,
+                role: role
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to create project membership");
+        }
+
+        return response.json();
+    };
+
+    return useMutation({
+        mutationFn: postProjectMembership,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["projects", projectId] });
+            queryClient.invalidateQueries({ queryKey: ["projects"] });
         },
     });
 }

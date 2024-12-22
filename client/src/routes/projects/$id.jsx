@@ -1,121 +1,98 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
-import { useState } from 'react';
-import { useProject, useProjectTodos, useCreateProjectTodos } from '../../../services/projects/endpoint';
-import { useDeleteTodo, useEditTodo } from '../../../services/todos/endpoint';
-import { Container, Box, Typography, List, Fab } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import useToken from '../../../hooks/useToken';
-import { useQueryClient } from '@tanstack/react-query';
-import TodoItem from '../../../components/TodoItem';
-import TodoFormModal from '../../../components/TodoFormModal';
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import {
+  useProject,
+  useProjectTodos,
+  useCreateProjectMembership,
+  useEditProject,
+  useDeleteProject,
+} from "@/services/projects/endpoint";
+import { useEditTodo } from "@/services/todos/endpoint";
+import {
+  useEditMembership,
+  useDeleteMembership,
+} from "@/services/memberships/endpoint";
+import { Container, Box, Typography, List, Fab, Button } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import PeopleIcon from "@mui/icons-material/People";
+import useToken from "@/hooks/useToken";
+import { useQueryClient } from "@tanstack/react-query";
+import TodoItem from "@/components/TodoItem";
+import TodoFormModal from "@/components/TodoFormModal";
+import DeleteTodoModal from "@/components/DeleteTodoModal";
+import EditProjectModal from "@/components/EditProjectModal";
+import DeleteProjectModal from "@/components/DeleteProjectModal";
+import MembershipModal from "@/components/MembershipModal";
+import { useUser } from "@/services/auth/endpoint";
+import useModalState from "@/hooks/useModalState";
+import useTodoForm from "@/hooks/useTodoForm";
+import useDeleteTodoForm from "@/hooks/useDeleteTodoForm";
+import { isUserAdmin } from "@/util/membership";
 
-export const Route = createFileRoute('/projects/$id')({
+export const Route = createFileRoute("/projects/$id")({
   component: Project,
   beforeLoad: ({ context }) => {
     if (!context.isAuthenticated) {
-      throw redirect({ to: '/login' });
+      throw redirect({ to: "/login" });
     }
-  }
+  },
 });
 
 function Project() {
   const { id } = Route.useParams();
+  const navigate = Route.useNavigate();
   const [token] = useToken();
+  const { data: user } = useUser(token);
   const queryClient = useQueryClient();
+
   const { data: project, isLoading: projectLoading } = useProject(id, token);
   const { data: todos, isLoading: todosLoading } = useProjectTodos(id, token);
-  const createTodoMutation = useCreateProjectTodos(id, token, queryClient);
-  const deleteTodoMutation = useDeleteTodo(id, token, queryClient);
+
+  const isAdmin = isUserAdmin(project?.memberships ?? [], user);
+
   const editTodoMutation = useEditTodo(id, token, queryClient);
-  const [newTodo, setNewTodo] = useState({
-    title: '',
-    description: '',
-    notes: '',
-    due_date: '',
-    project: id,
-    checkable_items: [],
-  });
-  const [error, setError] = useState('');
-  const [open, setOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editTodoId, setEditTodoId] = useState(null);
+  const editProjectMutation = useEditProject(id, token, queryClient);
+  const deleteProjectMutation = useDeleteProject(id, token, queryClient);
+  const createMembershipMutation = useCreateProjectMembership(
+    id,
+    token,
+    queryClient
+  );
+  const editMembershipMutation = useEditMembership(id, token, queryClient);
+  const deleteMembershipMutation = useDeleteMembership(id, token, queryClient);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-    setIsEditing(false);
-    setEditTodoId(null);
-    setNewTodo({
-      title: '',
-      description: '',
-      notes: '',
-      due_date: '',
-      project: id,
-      checkable_items: [],
-    });
-    setError('');
-  };
+  const [editProjectOpen, openEditProject, closeEditProject] = useModalState();
+  const [deleteProjectOpen, openDeleteProject, closeDeleteProject] =
+    useModalState();
+  const [membershipOpen, openMembership, closeMembership] = useModalState();
 
-  const handleCreateTodo = async () => {
-    if (
-      newTodo.title.trim() &&
-      newTodo.due_date.trim() &&
-      newTodo.checkable_items.every(item => item.title.trim())
-    ) {
-      try {
-        if (isEditing) {
-          await editTodoMutation.mutateAsync({ ...newTodo, id: editTodoId });
-        } else {
-          await createTodoMutation.mutateAsync(newTodo);
-        }
-        handleClose();
-      } catch (error) {
-        setError('Failed to save todo. Please check the input fields.');
-        console.error(error);
-      }
-    } else {
-      setError('Title, due date, and checkable items are required.');
-    }
-  };
+  const {
+    isOpen: todoFormOpen,
+    open: openTodoForm,
+    close: closeTodoForm,
+    isEditing,
+    newTodo,
+    setNewTodo,
+    error,
+    submit: submitTodoForm,
+    handleEditTodo,
+  } = useTodoForm(id, token);
 
-  const handleDeleteTodo = async (todo) => {
+  const {
+    isOpen: deleteTodoOpen,
+    setTodoToDelete,
+    open: openDeleteTodo,
+    close: closeDeleteTodo,
+    submit: submitDeleteTodo,
+  } = useDeleteTodoForm(id, token);
+
+  const handleDeleteProject = async () => {
     try {
-      await deleteTodoMutation.mutateAsync(todo);
+      await deleteProjectMutation.mutateAsync(project.id);
+      navigate({ to: "/" });
     } catch (error) {
-      console.error('Failed to delete todo:', error);
-    }
-  };
-
-  const handleEditTodo = (todo) => {
-    setNewTodo({
-      title: todo.title,
-      description: todo.description,
-      notes: todo.notes,
-      due_date: todo.due_date,
-      project: todo.project,
-      checkable_items: todo.checkable_items,
-    });
-    setEditTodoId(todo.id);
-    setIsEditing(true);
-    handleOpen();
-  };
-
-  const handleCheckTodo = async (todo, isChecked) => {
-    try {
-      await editTodoMutation.mutateAsync({ ...todo, is_done: isChecked });
-    } catch (error) {
-      console.error('Failed to update todo:', error);
-    }
-  };
-
-  const handleCheckCheckableItem = async (todo, updatedItem) => {
-    try {
-      await editTodoMutation.mutateAsync({
-        ...todo,
-        checkable_items: todo.checkable_items.map(item => item.id === updatedItem.id ? updatedItem : item),
-      });
-    } catch (error) {
-      console.error('Failed to update checkable item:', error);
+      console.error("Failed to delete project:", error);
     }
   };
 
@@ -132,6 +109,36 @@ function Project() {
         <Typography variant="body1" gutterBottom>
           Created at: {new Date(project.created_at).toLocaleString()}
         </Typography>
+        <Box sx={{ display: "flex", gap: 2 }}>
+          {isAdmin && (
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<EditIcon />}
+                onClick={openEditProject}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="contained"
+                color="error"
+                startIcon={<DeleteIcon />}
+                onClick={openDeleteProject}
+              >
+                Delete
+              </Button>
+            </>
+          )}
+          <Button
+            variant="contained"
+            color="secondary"
+            startIcon={<PeopleIcon />}
+            onClick={openMembership}
+          >
+            View Memberships
+          </Button>
+        </Box>
         <Box sx={{ mt: 4 }}>
           <Typography variant="h5" gutterBottom>
             Todos
@@ -142,18 +149,20 @@ function Project() {
                 key={todo.id}
                 todo={todo}
                 handleEditTodo={handleEditTodo}
-                handleDeleteTodo={handleDeleteTodo}
-                handleCheckCheckableItem={handleCheckCheckableItem}
-                handleCheckTodo={handleCheckTodo}
+                handleDeleteTodo={(todo) => {
+                  setTodoToDelete(todo);
+                  openDeleteTodo();
+                }}
+                editTodoMutationFn={editTodoMutation.mutateAsync}
               />
             ))}
           </List>
           <Fab
             color="primary"
             aria-label="add"
-            onClick={handleOpen}
+            onClick={openTodoForm}
             sx={{
-              position: 'fixed',
+              position: "fixed",
               bottom: 16,
               right: 16,
             }}
@@ -161,16 +170,43 @@ function Project() {
             <AddIcon />
           </Fab>
           <TodoFormModal
-            open={open}
-            handleClose={handleClose}
-            handleCreateTodo={handleCreateTodo}
-            newTodo={newTodo}
-            setNewTodo={setNewTodo}
+            open={todoFormOpen}
+            handleClose={closeTodoForm}
+            handleSubmitTodo={submitTodoForm}
+            todo={newTodo}
+            setTodo={setNewTodo}
             error={error}
             isEditing={isEditing}
+          />
+          <DeleteTodoModal
+            open={deleteTodoOpen}
+            handleClose={closeDeleteTodo}
+            handleDeleteTodo={submitDeleteTodo}
+          />
+          <EditProjectModal
+            open={editProjectOpen}
+            onClose={closeEditProject}
+            project={project}
+            handleEditProject={editProjectMutation.mutateAsync}
+          />
+          <DeleteProjectModal
+            open={deleteProjectOpen}
+            onClose={closeDeleteProject}
+            onDelete={handleDeleteProject}
+          />
+          <MembershipModal
+            open={membershipOpen}
+            onClose={closeMembership}
+            members={project.memberships ?? []}
+            user={user}
+            handleAddMember={createMembershipMutation.mutateAsync}
+            handleEditRole={editMembershipMutation.mutateAsync}
+            handleDeleteMember={deleteMembershipMutation.mutateAsync}
           />
         </Box>
       </Box>
     </Container>
   );
 }
+
+export default Project;
