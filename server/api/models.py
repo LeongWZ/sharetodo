@@ -29,7 +29,7 @@ class Todo(models.Model):
         HIGH = "High"
 
     title = models.CharField(max_length=130)
-    description = models.TextField(max_length=300)
+    description = models.TextField(blank=True, max_length=300)
     notes = models.TextField(blank=True)
     due_date = models.DateTimeField()
     updated_at = models.DateTimeField(auto_now=True)

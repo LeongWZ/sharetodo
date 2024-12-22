@@ -108,14 +108,6 @@ class ProjectMembershipList(APIView):
         
         return project
     
-    @extend_schema(responses={200: MembershipSerializer(many=True)})
-    def get(self, request: HttpRequest, pk: int):
-        project = self.get_object(pk)
-        memberships = Membership.objects.filter(project=project)
-        serializer = MembershipSerializer(memberships, many=True)
-        
-        return Response(serializer.data)
-    
     def post(self, request: HttpRequest, pk: int):
         project = self.get_object(pk)
         serializer = MembershipSerializer(data=request.data)
@@ -235,8 +227,9 @@ class TodoDetail(APIView):
     
     def delete(self, request: HttpRequest, pk: int):
         todo = self.get_object(pk)
+        project = todo.project
         todo.delete()
-        LogUtil.log_delete_action(request, pk)
+        LogUtil.log_delete_action(request, pk, project)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
