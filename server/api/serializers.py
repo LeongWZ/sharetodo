@@ -1,3 +1,4 @@
+from functools import cmp_to_key
 from rest_framework import serializers
 
 from .models import Project, Todo, User, Membership, CheckableItem, Log
@@ -27,6 +28,34 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ["id", "title", "created_at", "memberships"]
+
+    def to_representation(self, instance):
+        # Get the default representation
+        representation = super().to_representation(instance)
+
+        # Sort memberships
+        if "memberships" in representation:
+            representation["memberships"] = self.sort_serialized_memberships(representation["memberships"])
+
+        return representation
+    
+    def sort_serialized_memberships(self, serialized_memberships: list[dict]) -> list[dict]:
+        
+        def compare(m1: dict, m2: dict):
+
+            # Case 1: m1 < m2
+            if m1.get("role") == Membership.Role.MEMBER and m2.get("role") == Membership.Role.ADMIN:
+                return -1
+
+            # Case 2: m1 > m2
+            if m1.get("role") == Membership.Role.ADMIN and m2.get("role") == Membership.Role.MEMBER:
+                return 1
+
+            # Case 3: m1 == m2
+            return 0
+        
+        return list(sorted(serialized_memberships, key=cmp_to_key(compare), reverse=True))
+        
 
 class CheckableItemSerializer(serializers.ModelSerializer):
 

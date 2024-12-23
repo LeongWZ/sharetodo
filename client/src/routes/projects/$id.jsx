@@ -101,7 +101,7 @@ function Project() {
   return (
     <Container maxWidth="md">
       <Box sx={{ mt: 4, mb: 8 }}>
-        <Typography variant="h4" gutterBottom sx={{ wordBreak: 'break-word' }}>
+        <Typography variant="h4" gutterBottom sx={{ wordBreak: "break-word" }}>
           {project.title}
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -218,7 +218,11 @@ function Project() {
             handleDeleteMember={deleteMembershipMutation.mutateAsync}
             navigateOnLeaveProject={() => navigate({ to: "/" })}
           />
-          <ProjectLogsModal open={logsOpen} onClose={closeLogs} logs={logs ?? []} />
+          <ProjectLogsModal
+            open={logsOpen}
+            onClose={closeLogs}
+            logs={logs ?? []}
+          />
         </Box>
       </Box>
     </Container>

@@ -153,7 +153,7 @@ class MembershipDetail(APIView):
     def delete(self, request: HttpRequest, pk: int):
         membership = self.get_object(pk)
         project = membership.project
-        
+
         membership.delete()
 
         if project.memberships.count() == 0:
