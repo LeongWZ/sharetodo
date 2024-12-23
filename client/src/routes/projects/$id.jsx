@@ -53,7 +53,7 @@ function Project() {
 
   const { data: project, isLoading: projectLoading } = useProject(id, token);
   const { data: todos, isLoading: todosLoading } = useProjectTodos(id, token);
-  const { data: logs } = useProjectLogs(id, token);
+  const { data: logs, refetch: refetchLogs } = useProjectLogs(id, token);
 
   const isAdmin = isUserAdmin(project?.memberships ?? [], user);
 
@@ -93,6 +93,11 @@ function Project() {
     close: closeDeleteTodo,
     submit: submitDeleteTodo,
   } = useDeleteTodoForm(id, token);
+
+  const openAndRefetchLogs = async () => {
+    await refetchLogs();
+    openLogs();
+  }
 
   if (projectLoading) {
     return <LoadingPage />;
@@ -140,7 +145,7 @@ function Project() {
             variant="contained"
             color="default"
             startIcon={<HistoryIcon />}
-            onClick={openLogs}
+            onClick={openAndRefetchLogs}
           >
             View Logs
           </Button>

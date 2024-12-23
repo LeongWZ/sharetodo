@@ -17,6 +17,7 @@ export function useProjects(token) {
             });
             return response.json();
         },
+        staleTime: 10000,
     });
 }
 
@@ -65,6 +66,8 @@ export function useProject(projectId, token) {
             });
             return response.json();
         },
+        refetchInterval: 5000,
+        staleTime: 5000,
     });
 }
 
@@ -145,6 +148,8 @@ export function useProjectTodos(projectId, token) {
             });
             return response.json();
         },
+        refetchInterval: 5000,
+        staleTime: 5000,
     });
 }
 
