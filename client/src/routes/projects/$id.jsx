@@ -5,6 +5,7 @@ import {
   useCreateProjectMembership,
   useEditProject,
   useDeleteProject,
+  useProjectLogs,
 } from "@/services/projects/endpoint";
 import { useEditTodo } from "@/services/todos/endpoint";
 import {
@@ -12,10 +13,12 @@ import {
   useDeleteMembership,
 } from "@/services/memberships/endpoint";
 import { Container, Box, Typography, List, Fab, Button } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PeopleIcon from "@mui/icons-material/People";
+import HistoryIcon from "@mui/icons-material/History";
 import useToken from "@/hooks/useToken";
 import { useQueryClient } from "@tanstack/react-query";
 import TodoItem from "@/components/TodoItem";
@@ -29,6 +32,7 @@ import useModalState from "@/hooks/useModalState";
 import useTodoForm from "@/hooks/useTodoForm";
 import useDeleteTodoForm from "@/hooks/useDeleteTodoForm";
 import { isUserAdmin } from "@/util/membership";
+import ProjectLogsModal from "../../components/ProjectLogsModal";
 
 export const Route = createFileRoute("/projects/$id")({
   component: Project,
@@ -48,6 +52,7 @@ function Project() {
 
   const { data: project, isLoading: projectLoading } = useProject(id, token);
   const { data: todos, isLoading: todosLoading } = useProjectTodos(id, token);
+  const { data: logs } = useProjectLogs(id, token);
 
   const isAdmin = isUserAdmin(project?.memberships ?? [], user);
 
@@ -66,6 +71,7 @@ function Project() {
   const [deleteProjectOpen, openDeleteProject, closeDeleteProject] =
     useModalState();
   const [membershipOpen, openMembership, closeMembership] = useModalState();
+  const [logsOpen, openLogs, closeLogs] = useModalState();
 
   const {
     isOpen: todoFormOpen,
@@ -96,7 +102,7 @@ function Project() {
     }
   };
 
-  if (projectLoading || todosLoading) {
+  if (projectLoading) {
     return <div>Loading...</div>;
   }
 
@@ -109,7 +115,7 @@ function Project() {
         <Typography variant="body1" gutterBottom>
           Created at: {new Date(project.created_at).toLocaleString()}
         </Typography>
-        <Box sx={{ display: "flex", gap: 2 }}>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
           {isAdmin && (
             <>
               <Button
@@ -138,36 +144,51 @@ function Project() {
           >
             View Memberships
           </Button>
+          <Button
+            variant="contained"
+            color="default"
+            startIcon={<HistoryIcon />}
+            onClick={openLogs}
+          >
+            View Logs
+          </Button>
         </Box>
         <Box sx={{ mt: 4 }}>
           <Typography variant="h5" gutterBottom>
             Todos
           </Typography>
-          <List>
-            {todos.map((todo) => (
-              <TodoItem
-                key={todo.id}
-                todo={todo}
-                handleEditTodo={handleEditTodo}
-                handleDeleteTodo={(todo) => {
-                  setTodoToDelete(todo);
-                  openDeleteTodo();
-                }}
-                editTodoMutationFn={editTodoMutation.mutateAsync}
-              />
-            ))}
-          </List>
+          {todosLoading ? (
+            <CircularProgress />
+          ) : (
+            <List>
+              {todos.map((todo) => (
+                <TodoItem
+                  key={todo.id}
+                  todo={todo}
+                  handleEditTodo={handleEditTodo}
+                  handleDeleteTodo={(todo) => {
+                    setTodoToDelete(todo);
+                    openDeleteTodo();
+                  }}
+                  editTodoMutationFn={editTodoMutation.mutateAsync}
+                />
+              ))}
+            </List>
+          )}
           <Fab
             color="primary"
             aria-label="add"
+            variant="extended"
             onClick={openTodoForm}
             sx={{
               position: "fixed",
               bottom: 16,
               right: 16,
+              alignItems: "center",
             }}
           >
-            <AddIcon />
+            <AddIcon sx={{ mr: 1 }} />
+            Add Todo
           </Fab>
           <TodoFormModal
             open={todoFormOpen}
@@ -203,6 +224,7 @@ function Project() {
             handleEditRole={editMembershipMutation.mutateAsync}
             handleDeleteMember={deleteMembershipMutation.mutateAsync}
           />
+          <ProjectLogsModal open={logsOpen} onClose={closeLogs} logs={logs ?? []} />
         </Box>
       </Box>
     </Container>

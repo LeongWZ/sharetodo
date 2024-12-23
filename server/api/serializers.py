@@ -73,7 +73,7 @@ class TodoSerializer(serializers.ModelSerializer):
         return instance
     
 class LogSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    user = serializers.SlugRelatedField(slug_field="username", queryset=User.objects.all())
     todo = serializers.PrimaryKeyRelatedField(queryset=Todo.objects.all())
     
     class Meta:

@@ -30,6 +30,7 @@ export function useDeleteTodo(projectId, token, queryClient) {
         mutationFn: deleteTodo,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["projects", projectId, "todos"] });
+            queryClient.invalidateQueries({ queryKey: ["projects", projectId, "logs"] });
         }
     });
 }
@@ -56,6 +57,7 @@ export function useEditTodo(projectId, token, queryClient) {
         mutationFn: editTodo,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["projects", projectId, "todos"] });
+            queryClient.invalidateQueries({ queryKey: ["projects", projectId, "logs"] });
         }
     });
 }

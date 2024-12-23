@@ -57,7 +57,7 @@ class Log(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     todo = models.ForeignKey(Todo, on_delete=models.SET_NULL, null=True)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="logs")
 
     action = models.CharField(choices=Action.choices, max_length=10)
     timestamp = models.DateTimeField()

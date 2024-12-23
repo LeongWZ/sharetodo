@@ -169,7 +169,8 @@ export function useCreateProjectTodos(projectId, token, queryClient) {
     return useMutation({
         mutationFn: postProjectTodo,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey:["projects", projectId, "todos"]});
+            queryClient.invalidateQueries({ queryKey:["projects", projectId, "todos"] });
+            queryClient.invalidateQueries({ queryKey: ["projects", projectId, "logs"] });
         },
     });
 }
@@ -201,5 +202,27 @@ export function useCreateProjectMembership(projectId, token, queryClient) {
             queryClient.invalidateQueries({ queryKey: ["projects", projectId] });
             queryClient.invalidateQueries({ queryKey: ["projects"] });
         },
+    });
+}
+
+export function useProjectLogs(projectId, token) {
+    const getProjectLogs = async () => {
+        const response = await fetch(`${serverEndpoint}/projects/${projectId}/logs/`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Token ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to get project logs");
+        }
+
+        return response.json();
+    }
+
+    return useQuery({
+        queryKey: ["projects", projectId, "logs"],
+        queryFn: getProjectLogs
     });
 }
