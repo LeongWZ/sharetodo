@@ -4,7 +4,7 @@ import {
   useNavigate,
 } from '@tanstack/react-router'
 import { useState } from 'react'
-import { TextField, Button, Container, Typography, Box } from '@mui/material'
+import { TextField, Button, Container, Typography, Box, Link } from '@mui/material'
 import { useLogin } from '@/services/auth/endpoint'
 import useToken from '@/hooks/useToken'
 
@@ -85,6 +85,9 @@ function LogIn() {
           >
             Log In
           </Button>
+          <Link href="/forget-password" variant="body2" sx={{ display: 'block', textAlign: 'center', mt: 2 }}>
+            Forgot password?
+          </Link>
         </Box>
       </Box>
     </Container>

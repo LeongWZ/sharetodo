@@ -8,15 +8,36 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as ResetPasswordImport } from './routes/reset-password'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as IndexImport } from './routes/index'
 import { Route as ProjectsIdImport } from './routes/projects/$id'
 
+// Create Virtual Routes
+
+const ForgetPasswordLazyImport = createFileRoute('/forget-password')()
+
 // Create/Update Routes
+
+const ForgetPasswordLazyRoute = ForgetPasswordLazyImport.update({
+  id: '/forget-password',
+  path: '/forget-password',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/forget-password.lazy').then((d) => d.Route),
+)
+
+const ResetPasswordRoute = ResetPasswordImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const RegisterRoute = RegisterImport.update({
   id: '/register',
@@ -67,6 +88,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordImport
+      parentRoute: typeof rootRoute
+    }
+    '/forget-password': {
+      id: '/forget-password'
+      path: '/forget-password'
+      fullPath: '/forget-password'
+      preLoaderRoute: typeof ForgetPasswordLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/projects/$id': {
       id: '/projects/$id'
       path: '/projects/$id'
@@ -83,6 +118,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/forget-password': typeof ForgetPasswordLazyRoute
   '/projects/$id': typeof ProjectsIdRoute
 }
 
@@ -90,6 +127,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/forget-password': typeof ForgetPasswordLazyRoute
   '/projects/$id': typeof ProjectsIdRoute
 }
 
@@ -98,15 +137,36 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/forget-password': typeof ForgetPasswordLazyRoute
   '/projects/$id': typeof ProjectsIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/projects/$id'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/reset-password'
+    | '/forget-password'
+    | '/projects/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/projects/$id'
-  id: '__root__' | '/' | '/login' | '/register' | '/projects/$id'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/reset-password'
+    | '/forget-password'
+    | '/projects/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/register'
+    | '/reset-password'
+    | '/forget-password'
+    | '/projects/$id'
   fileRoutesById: FileRoutesById
 }
 
@@ -114,6 +174,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  ForgetPasswordLazyRoute: typeof ForgetPasswordLazyRoute
   ProjectsIdRoute: typeof ProjectsIdRoute
 }
 
@@ -121,6 +183,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  ForgetPasswordLazyRoute: ForgetPasswordLazyRoute,
   ProjectsIdRoute: ProjectsIdRoute,
 }
 
@@ -137,6 +201,8 @@ export const routeTree = rootRoute
         "/",
         "/login",
         "/register",
+        "/reset-password",
+        "/forget-password",
         "/projects/$id"
       ]
     },
@@ -148,6 +214,12 @@ export const routeTree = rootRoute
     },
     "/register": {
       "filePath": "register.jsx"
+    },
+    "/reset-password": {
+      "filePath": "reset-password.jsx"
+    },
+    "/forget-password": {
+      "filePath": "forget-password.lazy.jsx"
     },
     "/projects/$id": {
       "filePath": "projects/$id.jsx"

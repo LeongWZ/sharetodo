@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Box, Typography, IconButton, Checkbox, Tooltip } from '@mui/material';
+import { Box, Typography, IconButton, Checkbox, Tooltip, Divider, List, ListItem } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckableItem from './CheckableItem';
@@ -26,42 +26,46 @@ const TodoItem = ({ todo, handleEditTodo, handleDeleteTodo, editTodoMutationFn }
         p: 2,
         border: '1px solid #ccc',
         borderRadius: 2,
+        boxShadow: 1,
       }}
     >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography variant="h6">{todo.title}</Typography>
-          <Tooltip title={todo.is_done ? "Done" : "Not done"}>
-            <Checkbox
-              checked={todo.is_done}
-              onChange={(e) => handleCheckTodo(e.target.checked)}
-              color="success"
-              />
-          </Tooltip>
-        </Box>
-        <Box sx={{ marginBottom: 1 }}>
-          <PriorityTag priority={todo.priority} />
-        </Box>
-        <Typography variant="body2" color="textSecondary">
-          Description: {todo.description}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Notes: {todo.notes}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Due Date: {todo.due_date ? new Date(todo.due_date).toLocaleDateString() : "None"}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Updated At: {new Date(todo.updated_at).toLocaleString()}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Checkable Items:
-        </Typography>
-        <Box>
-          {todo.checkable_items.map((item) => (
-            <CheckableItem key={item.id} item={item} onCheck={handleCheckCheckableItem} />
-          ))}
-        </Box>
-      <Box sx={{ display: "flex", justifyContent: "end" }}>
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Typography variant="h6">{todo.title}</Typography>
+        <Tooltip title={todo.is_done ? "Done" : "Not done"}>
+          <Checkbox
+            checked={todo.is_done}
+            onChange={(e) => handleCheckTodo(e.target.checked)}
+            color="success"
+          />
+        </Tooltip>
+      </Box>
+      <Box sx={{ marginBottom: 1 }}>
+        <PriorityTag priority={todo.priority} />
+      </Box>
+      <Divider sx={{ my: 2 }} />
+      <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+        <strong>Description:</strong> {todo.description}
+      </Typography>
+      <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+        <strong>Notes:</strong> {todo.notes}
+      </Typography>
+      <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+        <strong>Due Date:</strong> {todo.due_date ? new Date(todo.due_date).toLocaleDateString() : "None"}
+      </Typography>
+      <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+        <strong>Updated At:</strong> {new Date(todo.updated_at).toLocaleString()}
+      </Typography>
+      <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+        <strong>Checkable Items:</strong>
+      </Typography>
+      <List dense>
+        {todo.checkable_items.map((item) => (
+          <ListItem key={item.id} sx={{ pl: 0 }}>
+            <CheckableItem item={item} onCheck={handleCheckCheckableItem} />
+          </ListItem>
+        ))}
+      </List>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
         <IconButton color="primary" onClick={() => handleEditTodo(todo)}>
           <EditIcon />
         </IconButton>

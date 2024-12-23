@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-RESET_PASSWORD_CLIENT_ENDPOINT = os.environ.get("RESET_PASSWORD_CLIENT_ENDPOINT")
+CLIENT_ENDPOINT = os.environ.get("CLIENT_ENDPOINT")
 
 def reset_password_confirm(request: HttpRequest, uidb64, token):
-    return HttpResponseRedirect(RESET_PASSWORD_CLIENT_ENDPOINT)
+    return HttpResponseRedirect(f"{CLIENT_ENDPOINT}/reset-password?uid={uidb64}&token={token}")

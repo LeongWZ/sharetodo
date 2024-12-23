@@ -66,7 +66,7 @@ const MembershipModal = ({ open, onClose, members, user, handleAddMember, handle
           gap: 2,
         }}
       >
-        <Typography variant="h6">Project Memberships</Typography>
+        <Typography variant="h6">Project Members</Typography>
         {members.map((member) => (
           <Box key={member.id} sx={{ display: 'flex', justifyContent: "space-between", alignItems: 'center', gap: 1 }}>
             <Typography>{member.user === user.username ? `${member.user} (You)` : member.user}</Typography>

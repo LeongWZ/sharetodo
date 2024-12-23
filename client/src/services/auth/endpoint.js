@@ -75,3 +75,54 @@ export const useUser = (token) => {
         },
     });
 };
+
+export const useForgetPassword = () => {
+    const postForgetPassword = async ({ email }) => {
+        const response = await fetch(`${serverEndpoint}/auth/password/reset/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to reset password');
+        }
+
+        return response.json();
+    }
+
+    return useMutation({
+        mutationFn: postForgetPassword,
+    });
+};
+
+export const useResetPassword = () => {
+    const postResetPassword = async ({ uid, token, password1, password2 }) => {
+        const response = await fetch(`${serverEndpoint}/auth/password/reset/confirm/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                uid,
+                token,
+                new_password1: password1,
+                new_password2: password2
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(`Failed to reset password: ${JSON.stringify(data)}`);
+        }
+
+        return data;
+    }
+
+    return useMutation({
+        mutationFn: postResetPassword,
+    });
+}

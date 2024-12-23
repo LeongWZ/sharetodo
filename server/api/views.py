@@ -1,4 +1,5 @@
 from django.http import Http404, HttpRequest
+from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -10,6 +11,9 @@ from .models import Membership, Project, Todo, User
 from .serializers import LogSerializer, MembershipSerializer, ProjectSerializer, TodoSerializer
 from .permissions import HasProjectMembership, IsProjectAdminOrReadOnly
 from .logutil import LogUtil
+
+def index(request: HttpRequest):
+    return render(request, "api/index.html")
 
 class ProjectList(APIView):
     authentication_classes = [TokenAuthentication]

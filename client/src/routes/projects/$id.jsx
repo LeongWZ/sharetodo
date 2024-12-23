@@ -142,7 +142,7 @@ function Project() {
             startIcon={<PeopleIcon />}
             onClick={openMembership}
           >
-            View Memberships
+            View Members
           </Button>
           <Button
             variant="contained"

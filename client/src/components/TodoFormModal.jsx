@@ -72,6 +72,8 @@ const TodoFormModal = ({ open, handleClose, handleSubmitTodo, todo, setTodo, err
           label="Notes (optional)"
           value={todo.notes}
           onChange={(e) => setTodo({ ...todo, notes: e.target.value })}
+          multiline
+          rows={3}
           fullWidth
         />
         <TextField
