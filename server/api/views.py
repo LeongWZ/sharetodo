@@ -9,7 +9,7 @@ from drf_spectacular.utils import extend_schema
 
 from .models import Membership, Project, Todo, User
 from .serializers import LogSerializer, MembershipSerializer, ProjectSerializer, TodoSerializer
-from .permissions import HasProjectMembership, IsProjectAdminOrReadOnly
+from .permissions import HasProjectMembership, IsAdminOrIsOwnMembership, IsProjectAdminOrReadOnly
 from .logutil import LogUtil
 
 def index(request: HttpRequest):
@@ -31,7 +31,7 @@ class ProjectList(APIView):
         serializes the project data, and returns it in the response.
         """
         user: User = request.user
-        projects = Project.objects.filter(memberships__user=user)
+        projects = Project.objects.filter(memberships__user=user).order_by("-created_at")
         serializer = ProjectSerializer(projects, many=True)
         return Response(serializer.data)
     
@@ -125,7 +125,7 @@ class ProjectMembershipList(APIView):
 
 class MembershipDetail(APIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated, HasProjectMembership, IsProjectAdminOrReadOnly]
+    permission_classes = [IsAuthenticated, IsAdminOrIsOwnMembership]
     
     # For drf-spectacular to generate schema
     serializer_class = MembershipSerializer
@@ -136,8 +136,7 @@ class MembershipDetail(APIView):
         except Membership.DoesNotExist:
             raise Http404
         
-        project = membership.project
-        self.check_object_permissions(self.request, project)
+        self.check_object_permissions(self.request, membership)
 
         return membership
     
@@ -153,7 +152,13 @@ class MembershipDetail(APIView):
     
     def delete(self, request: HttpRequest, pk: int):
         membership = self.get_object(pk)
+        project = membership.project
+        
         membership.delete()
+
+        if project.memberships.count() == 0:
+            project.delete()
+    
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -177,7 +182,7 @@ class ProjectTodoList(APIView):
     @extend_schema(responses={200: TodoSerializer(many=True)})
     def get(self, request: HttpRequest, pk: int):
         project = self.get_object(pk)
-        todos = project.todos.all()
+        todos = project.todos.all().order_by("-id")
         serializer = TodoSerializer(todos, many=True)
         return Response(serializer.data)
     
@@ -257,6 +262,6 @@ class ProjectLogList(APIView):
     @extend_schema(responses={200: LogSerializer(many=True)})
     def get(self, request: HttpRequest, pk: int):
         project = self.get_object(pk)
-        logs = project.logs.all()
+        logs = project.logs.all().order_by("-timestamp")
         serializer = LogSerializer(logs, many=True)
         return Response(serializer.data)

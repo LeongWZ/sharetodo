@@ -1,7 +1,6 @@
-import { defineConfig } from 'vite'
-import viteReact from '@vitejs/plugin-react'
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
-import path from 'path';
+import { defineConfig } from 'vite';
+import viteReact from '@vitejs/plugin-react';
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -9,10 +8,4 @@ export default defineConfig({
     TanStackRouterVite(),
     viteReact(),
   ],
-  resolve: {
-    alias: {
-      // eslint-disable-next-line no-undef
-      '@': path.resolve(__dirname, './src'), // Adjust the path as needed
-    },
-  },
 })

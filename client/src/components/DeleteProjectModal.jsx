@@ -1,7 +1,13 @@
 /* eslint-disable react/prop-types */
 import { Modal, Box, Typography, Button } from '@mui/material';
 
-const DeleteProjectModal = ({ open, onClose, onDelete }) => {
+const DeleteProjectModal = ({ open, onClose, handleDeleteProject, navigateOnDeleteProject }) => {
+  
+  const onDelete = async () => {
+    await handleDeleteProject();
+    navigateOnDeleteProject();
+  }
+  
   return (
     <Modal open={open} onClose={onClose}>
       <Box

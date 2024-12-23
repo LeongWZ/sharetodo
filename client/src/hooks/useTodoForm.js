@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useCreateProjectTodos } from '@/services/projects/endpoint';
-import { useEditTodo } from '@/services/todos/endpoint';
+import { useCreateProjectTodos } from '../services/projects/endpoint';
+import { useEditTodo } from '../services/todos/endpoint';
 import { useQueryClient } from '@tanstack/react-query';
 import { PriorityEnum } from '../util/constants';
 

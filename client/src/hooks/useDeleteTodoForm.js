@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDeleteTodo } from '@/services/todos/endpoint';
+import { useDeleteTodo } from '../services/todos/endpoint';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function useDeleteTodoForm(projectId, token) {

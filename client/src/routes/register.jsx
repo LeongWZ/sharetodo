@@ -5,8 +5,8 @@ import {
 } from '@tanstack/react-router';
 import { useState } from 'react';
 import { TextField, Button, Container, Typography, Box } from '@mui/material';
-import { useRegistration } from '@/services/auth/endpoint';
-import useToken from '@/hooks/useToken';
+import { useRegistration } from '../services/auth/endpoint';
+import useToken from '../hooks/useToken';
 
 export const Route = createFileRoute('/register')({
   beforeLoad: ({ context }) => {

@@ -1,13 +1,14 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Box, Button, Container, Grid2, Typography, CircularProgress } from '@mui/material';
-import { useCreateProject, useProjects } from '@/services/projects/endpoint';
-import useToken from '@/hooks/useToken';
-import { isAuthenticated } from '@/util/auth';
-import WelcomePage from '@/components/WelcomePage';
-import { useUser } from '@/services/auth/endpoint';
-import CreateProjectModal from '@/components/CreateProjectModal';
+import { Button, Container, Grid2, Typography } from '@mui/material';
+import { useCreateProject, useProjects } from '../services/projects/endpoint';
+import useToken from '../hooks/useToken';
+import { isAuthenticated } from '../util/auth';
+import WelcomePage from '../components/WelcomePage';
+import { useUser } from '../services/auth/endpoint';
+import CreateProjectModal from '../components/CreateProjectModal';
+import LoadingPage from '../components/LoadingPage';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -37,11 +38,7 @@ function Index() {
   }
 
   if (isLoading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingPage />;
   }
 
   return (

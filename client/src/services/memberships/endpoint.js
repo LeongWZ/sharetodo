@@ -3,8 +3,8 @@ import { useMutation } from '@tanstack/react-query';
 const serverEndpoint = import.meta.env.VITE_SERVER_ENDPOINT;
 
 export function useDeleteMembership(projectId, token, queryClient) {
-    const deleteMembership = async (membershipId) => {
-        const response = await fetch(`${serverEndpoint}/memberships/${membershipId}/`, {
+    const deleteMembership = async ({ id }) => {
+        const response = await fetch(`${serverEndpoint}/memberships/${id}/`, {
             method: 'DELETE',
             headers: {
                 "Authorization": `Token ${token}`

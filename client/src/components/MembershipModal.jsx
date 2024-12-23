@@ -3,10 +3,10 @@ import React from 'react';
 import { Modal, Box, Typography, TextField, Button, IconButton, Select, MenuItem } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { RoleEnum } from '@/util/constants';
-import { isUserAdmin } from '@/util/membership';
+import { RoleEnum } from '../util/constants';
+import { isUserAdmin } from '../util/membership';
 
-const MembershipModal = ({ open, onClose, members, user, handleAddMember, handleEditMember, handleDeleteMember }) => {
+const MembershipModal = ({ open, onClose, members, user, handleAddMember, handleEditMember, handleDeleteMember, navigateOnLeaveProject }) => {
   const isAdmin = isUserAdmin(members, user);
   const [newMember, setNewMember] = React.useState('');
   const [newRole, setNewRole] = React.useState(RoleEnum.MEMBER);
@@ -40,13 +40,25 @@ const MembershipModal = ({ open, onClose, members, user, handleAddMember, handle
 
   const onDeleteMember = async (membershipId) => {
     try {
-      await handleDeleteMember(membershipId);
+      await handleDeleteMember({ id: membershipId });
       setError('');
     } catch (error) {
       console.error('Failed to delete member:', error);
       setError(error.message)
     }
   };
+
+  const onLeaveProject = async () => {
+    try {
+      await handleDeleteMember({
+        id: members.find((m) => m.user === user.username)?.id
+      });
+      navigateOnLeaveProject();
+    } catch (error) {
+      console.error("Failed to leave project:", error);
+      setError(error.message)
+    }
+  }
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -114,6 +126,9 @@ const MembershipModal = ({ open, onClose, members, user, handleAddMember, handle
           </Box>
         )}
         {error && <Typography color="error">{error}</Typography>}
+        <Button variant="outlined" color="error" onClick={onLeaveProject}>
+          Leave Project
+        </Button>
         <Button variant="contained" onClick={onClose}>
           Close
         </Button>

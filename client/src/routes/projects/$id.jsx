@@ -6,12 +6,12 @@ import {
   useEditProject,
   useDeleteProject,
   useProjectLogs,
-} from "@/services/projects/endpoint";
-import { useEditTodo } from "@/services/todos/endpoint";
+} from "../../services/projects/endpoint";
+import { useEditTodo } from "../../services/todos/endpoint";
 import {
   useEditMembership,
   useDeleteMembership,
-} from "@/services/memberships/endpoint";
+} from "../../services/memberships/endpoint";
 import { Container, Box, Typography, List, Fab, Button } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import AddIcon from "@mui/icons-material/Add";
@@ -19,20 +19,21 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PeopleIcon from "@mui/icons-material/People";
 import HistoryIcon from "@mui/icons-material/History";
-import useToken from "@/hooks/useToken";
+import useToken from "../../hooks/useToken";
 import { useQueryClient } from "@tanstack/react-query";
-import TodoItem from "@/components/TodoItem";
-import TodoFormModal from "@/components/TodoFormModal";
-import DeleteTodoModal from "@/components/DeleteTodoModal";
-import EditProjectModal from "@/components/EditProjectModal";
-import DeleteProjectModal from "@/components/DeleteProjectModal";
-import MembershipModal from "@/components/MembershipModal";
-import { useUser } from "@/services/auth/endpoint";
-import useModalState from "@/hooks/useModalState";
-import useTodoForm from "@/hooks/useTodoForm";
-import useDeleteTodoForm from "@/hooks/useDeleteTodoForm";
-import { isUserAdmin } from "@/util/membership";
+import TodoItem from "../../components/TodoItem";
+import TodoFormModal from "../../components/TodoFormModal";
+import DeleteTodoModal from "../../components/DeleteTodoModal";
+import EditProjectModal from "../../components/EditProjectModal";
+import DeleteProjectModal from "../../components/DeleteProjectModal";
+import MembershipModal from "../../components/MembershipModal";
+import { useUser } from "../../services/auth/endpoint";
+import useModalState from "../../hooks/useModalState";
+import useTodoForm from "../../hooks/useTodoForm";
+import useDeleteTodoForm from "../../hooks/useDeleteTodoForm";
+import { isUserAdmin } from "../../util/membership";
 import ProjectLogsModal from "../../components/ProjectLogsModal";
+import LoadingPage from "../../components/LoadingPage";
 
 export const Route = createFileRoute("/projects/$id")({
   component: Project,
@@ -93,23 +94,14 @@ function Project() {
     submit: submitDeleteTodo,
   } = useDeleteTodoForm(id, token);
 
-  const handleDeleteProject = async () => {
-    try {
-      await deleteProjectMutation.mutateAsync(project.id);
-      navigate({ to: "/" });
-    } catch (error) {
-      console.error("Failed to delete project:", error);
-    }
-  };
-
   if (projectLoading) {
-    return <div>Loading...</div>;
+    return <LoadingPage />;
   }
 
   return (
     <Container maxWidth="md">
       <Box sx={{ mt: 4, mb: 8 }}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom sx={{ wordBreak: 'break-word' }}>
           {project.title}
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -213,7 +205,8 @@ function Project() {
           <DeleteProjectModal
             open={deleteProjectOpen}
             onClose={closeDeleteProject}
-            onDelete={handleDeleteProject}
+            handleDeleteProject={deleteProjectMutation.mutateAsync}
+            navigateOnDeleteProject={() => navigate({ to: "/" })}
           />
           <MembershipModal
             open={membershipOpen}
@@ -223,6 +216,7 @@ function Project() {
             handleAddMember={createMembershipMutation.mutateAsync}
             handleEditMember={editMembershipMutation.mutateAsync}
             handleDeleteMember={deleteMembershipMutation.mutateAsync}
+            navigateOnLeaveProject={() => navigate({ to: "/" })}
           />
           <ProjectLogsModal open={logsOpen} onClose={closeLogs} logs={logs ?? []} />
         </Box>
