@@ -3,6 +3,7 @@ import { Box, Typography, IconButton, Checkbox, Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckableItem from './CheckableItem';
+import PriorityTag from './PriorityTag';
 
 const TodoItem = ({ todo, handleEditTodo, handleDeleteTodo, editTodoMutationFn }) => {
   
@@ -37,7 +38,9 @@ const TodoItem = ({ todo, handleEditTodo, handleDeleteTodo, editTodoMutationFn }
               />
           </Tooltip>
         </Box>
-
+        <Box sx={{ marginBottom: 1 }}>
+          <PriorityTag priority={todo.priority} />
+        </Box>
         <Typography variant="body2" color="textSecondary">
           Description: {todo.description}
         </Typography>
@@ -45,13 +48,10 @@ const TodoItem = ({ todo, handleEditTodo, handleDeleteTodo, editTodoMutationFn }
           Notes: {todo.notes}
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          Due Date: {new Date(todo.due_date).toLocaleString()}
+          Due Date: {todo.due_date ? new Date(todo.due_date).toLocaleDateString() : "None"}
         </Typography>
         <Typography variant="body2" color="textSecondary">
           Updated At: {new Date(todo.updated_at).toLocaleString()}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Priority: {todo.priority}
         </Typography>
         <Typography variant="body2" color="textSecondary">
           Checkable Items:

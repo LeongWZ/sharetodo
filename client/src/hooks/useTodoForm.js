@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useCreateProjectTodos } from '@/services/projects/endpoint';
 import { useEditTodo } from '@/services/todos/endpoint';
 import { useQueryClient } from '@tanstack/react-query';
+import { PriorityEnum } from '../util/constants';
 
 export default function useTodoForm(projectId, token) {
   const queryClient = useQueryClient();
@@ -15,7 +16,8 @@ export default function useTodoForm(projectId, token) {
     title: '',
     description: '',
     notes: '',
-    due_date: '',
+    due_date: null,
+    priority: PriorityEnum.MEDIUM,
     project: projectId,
     checkable_items: [],
   });
@@ -30,7 +32,8 @@ export default function useTodoForm(projectId, token) {
       title: '',
       description: '',
       notes: '',
-      due_date: '',
+      due_date: null,
+      priority: PriorityEnum.MEDIUM,
       project: projectId,
       checkable_items: [],
     });
@@ -40,7 +43,6 @@ export default function useTodoForm(projectId, token) {
   const submit = async () => {
     if (
       newTodo.title.trim() &&
-      newTodo.due_date.trim() &&
       newTodo.checkable_items.every((item) => item.title.trim())
     ) {
       try {
@@ -65,6 +67,7 @@ export default function useTodoForm(projectId, token) {
       description: todo.description,
       notes: todo.notes,
       due_date: todo.due_date,
+      priority: todo.priority,
       project: todo.project,
       checkable_items: todo.checkable_items,
     });

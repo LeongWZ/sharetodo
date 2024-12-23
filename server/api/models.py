@@ -36,7 +36,7 @@ class Todo(models.Model):
     title = models.CharField(max_length=130)
     description = models.TextField(blank=True, max_length=300)
     notes = models.TextField(blank=True)
-    due_date = models.DateTimeField()
+    due_date = models.DateField(null=True)
     updated_at = models.DateTimeField(auto_now=True)
     priority = models.CharField(choices=Priority.choices, default=Priority.MEDIUM, max_length=10)
     is_done = models.BooleanField(default=False)

@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 
 const serverEndpoint = import.meta.env.VITE_SERVER_ENDPOINT;
 
-export function useDeleteMembership(token, projectId, queryClient) {
+export function useDeleteMembership(projectId, token, queryClient) {
     const deleteMembership = async (membershipId) => {
         const response = await fetch(`${serverEndpoint}/memberships/${membershipId}/`, {
             method: 'DELETE',
@@ -27,7 +27,7 @@ export function useDeleteMembership(token, projectId, queryClient) {
     });
 }
 
-export function useEditMembership(token, projectId, queryClient) {
+export function useEditMembership(projectId, token, queryClient) {
     const editMembership = async ({id, username, role}) => {
         const response = await fetch(`${serverEndpoint}/memberships/${id}/`, {
             method: 'PUT',

@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
-import { Box, Typography, TextField, Button, IconButton, Modal, Checkbox } from '@mui/material';
+import { Box, Typography, TextField, Button, IconButton, Modal, Checkbox, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
+import { PriorityEnum } from '../util/constants';
 
 const TodoFormModal = ({ open, handleClose, handleSubmitTodo, todo, setTodo, error, isEditing }) => {
   const handleCheckableItemChange = (index, value) => {
@@ -77,13 +78,25 @@ const TodoFormModal = ({ open, handleClose, handleSubmitTodo, todo, setTodo, err
           label="Due Date"
           type="date"
           value={todo.due_date}
-          onChange={(e) => setTodo({ ...todo, due_date: e.target.value })}
+          onChange={(e) => setTodo({ ...todo, due_date: e.target.value.length === 0 ? null : e.target.value })}
           fullWidth
-          required
           InputLabelProps={{
             shrink: true,
           }}
         />
+        <FormControl fullWidth>
+          <InputLabel>Priority</InputLabel>
+          <Select
+            label="Priority"
+            value={todo.priority}
+            onChange={(e) => setTodo({ ...todo, priority: e.target.value })}
+            fullWidth
+          >
+            <MenuItem value={PriorityEnum.LOW}>Low</MenuItem>
+            <MenuItem value={PriorityEnum.MEDIUM}>Medium</MenuItem>
+            <MenuItem value={PriorityEnum.HIGH}>High</MenuItem>
+          </Select>
+        </FormControl>
         <Typography variant="h6">Checkable Items</Typography>
         {todo.checkable_items.map((item, index) => (
           <CheckableItem

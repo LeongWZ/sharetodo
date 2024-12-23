@@ -108,7 +108,7 @@ function Project() {
 
   return (
     <Container maxWidth="md">
-      <Box sx={{ mt: 4 }}>
+      <Box sx={{ mt: 4, mb: 8 }}>
         <Typography variant="h4" gutterBottom>
           {project.title}
         </Typography>
@@ -221,7 +221,7 @@ function Project() {
             members={project.memberships ?? []}
             user={user}
             handleAddMember={createMembershipMutation.mutateAsync}
-            handleEditRole={editMembershipMutation.mutateAsync}
+            handleEditMember={editMembershipMutation.mutateAsync}
             handleDeleteMember={deleteMembershipMutation.mutateAsync}
           />
           <ProjectLogsModal open={logsOpen} onClose={closeLogs} logs={logs ?? []} />

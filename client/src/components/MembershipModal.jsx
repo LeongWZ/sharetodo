@@ -69,8 +69,10 @@ const MembershipModal = ({ open, onClose, members, user, handleAddMember, handle
         <Typography variant="h6">Project Memberships</Typography>
         {members.map((member) => (
           <Box key={member.id} sx={{ display: 'flex', justifyContent: "space-between", alignItems: 'center', gap: 1 }}>
-            <Typography>{member.user}</Typography>
-
+            <Typography>{member.user === user.username ? `${member.user} (You)` : member.user}</Typography>
+            {(!isAdmin || member.user === user.username) &&
+              <Typography sx={{ color: 'text.secondary' }}>{member.role}</Typography>
+            }
             {isAdmin && member.user !== user.username && (
             <Box sx={{ display: 'flex', gap: 1 }}>
                 <Select
