@@ -188,5 +188,5 @@ AUTHENTICATION_BACKENDS = [
 
 # specify CORS allowed origins
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
+    os.getenv("CLIENT_ENDPOINT", "http://localhost:5173"),
 ]
