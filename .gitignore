@@ -28,6 +28,7 @@ client/package-lock.json
 __pycache__/
 *.pyc
 env/
+venv/
 
 *.sqlite3
 
