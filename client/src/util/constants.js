@@ -1,4 +1,4 @@
-export const TOKEN_COOKIE_KEY = 'token';
+export const TOKEN_COOKIE_KEY = 'SHARETODO_AUTHENTICATION_TOKEN';
 
 export class RoleEnum {
     static ADMIN = 'Admin';

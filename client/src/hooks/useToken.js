@@ -23,7 +23,7 @@ export default function useToken() {
         });
     };
 
-    return [cookies?.token, setToken, removeToken];
+    return [cookies[TOKEN_COOKIE_KEY], setToken, removeToken];
 }
 
 function daysToMs(days) {
