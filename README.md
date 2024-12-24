@@ -109,7 +109,7 @@ The `client` folder contains the frontend code for the ShareTodo application. It
   - **routes/**: This folder contains the route components for the application. Each route corresponds to a different page in the application. Examples include `Login`, `ForgetPassword`, and `ResetPassword`. The application uses file-based routing provided by Tanstack Router, which allows routes to be defined based on the file structure. This approach simplifies the routing setup and makes it easier to manage and navigate the codebase. Each file in the `routes` folder represents a route, and the folder structure reflects the nested routes in the application.
   - **services/**: This folder contains the code for interacting with the backend API. It includes functions for making API requests and handling responses. Examples include `auth/endpoint.js` and `projects/endpoint.js`.
   - **App.jsx**: This file is the main component that sets up the routing and renders the application.
-  - **main.js**: This file is the entry point for the React application. It renders the `App` component and mounts it to the DOM.
+  - **main.jsx**: This file is the entry point for the React application. It renders the `App` component and mounts it to the DOM.
 
 This file structure ensures a clear separation of concerns and makes it easy to navigate and maintain the codebase. The `client` folder handles the frontend logic and user interface, while the `server` folder handles the backend logic and API endpoints.
 
