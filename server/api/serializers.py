@@ -17,7 +17,6 @@ class MembershipSerializer(serializers.ModelSerializer):
         data = super().to_internal_value(data)
         if self.instance:
             # update
-            print(data)
             for x in self.Meta.create_only_fields:
                 data.pop(x)
         return data
